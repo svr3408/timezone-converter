@@ -177,6 +177,22 @@ function initApp() {
     }
   }
 
+  // Single chokepoint for zone-input validity. Toggles aria-invalid (style.css
+  // keys the error border/message off it) and in the same step injects/clears
+  // the error element's text. The text must be injected on error, not merely
+  // revealed by CSS — a role="alert" whose static text only toggles `display`
+  // is not reliably announced by screen readers, so the <p> starts empty.
+  function setInvalid(input, invalid) {
+    const errorEl = document.getElementById(input.getAttribute('aria-describedby'));
+    if (invalid) {
+      input.setAttribute('aria-invalid', 'true');
+      errorEl.textContent = 'Unknown timezone';
+    } else {
+      input.removeAttribute('aria-invalid');
+      errorEl.textContent = '';
+    }
+  }
+
   function bindZoneInput(input, setZone, storageKey) {
     // While typing: apply only exact matches, silently.
     input.addEventListener('input', () => {
@@ -184,14 +200,13 @@ function initApp() {
       if (zone) {
         setZone(zone);
         saveZone(storageKey, zone);
-        input.removeAttribute('aria-invalid');
+        setInvalid(input, false);
         update();
       }
     });
     // On blur/enter: mark leftover non-matching text as invalid.
     input.addEventListener('change', () => {
-      const invalid = !resolveZone(input.value);
-      input.setAttribute('aria-invalid', invalid);
+      setInvalid(input, !resolveZone(input.value));
     });
   }
 
@@ -207,8 +222,8 @@ function initApp() {
     [sourceZone, targetZone] = [targetZone, sourceZone];
     sourceInput.value = labelFor(sourceZone);
     targetInput.value = labelFor(targetZone);
-    sourceInput.removeAttribute('aria-invalid');
-    targetInput.removeAttribute('aria-invalid');
+    setInvalid(sourceInput, false);
+    setInvalid(targetInput, false);
     saveZone(STORAGE_SOURCE, sourceZone);
     saveZone(STORAGE_TARGET, targetZone);
     update();
