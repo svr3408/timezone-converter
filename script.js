@@ -49,6 +49,15 @@ function formatOffsetDiff(minutes) {
   return m ? `${sign}${h}h ${m}m` : `${sign}${h}h`;
 }
 
+// Minutes -> "UTC+03:00", "UTC−05:30", "UTC+00:00" (U+2212 minus, as in the design).
+function formatUtcOffset(minutes) {
+  const sign = minutes < 0 ? '−' : '+';
+  const abs = Math.abs(minutes);
+  const h = String(Math.floor(abs / 60)).padStart(2, '0');
+  const m = String(abs % 60).padStart(2, '0');
+  return `UTC${sign}${h}:${m}`;
+}
+
 // "2026-06-12T17:30" -> {year, month, day, hour, minute}, or null if unparseable.
 function parseDateTimeLocal(value) {
   const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(value || '');
@@ -96,10 +105,27 @@ function initApp() {
 
   const zones = new Set(Intl.supportedValuesOf('timeZone'));
   zones.add('UTC'); // UTC is always a valid Intl timezone even if absent from supportedValuesOf
+  // Each option's value is the full label "Zone (UTC±HH:MM)"; maps convert between
+  // that label and the bare IANA name. Offsets are computed once at load — DST can
+  // drift them, but it's only a picker hint, and localStorage stores the bare zone
+  // (not the label), so persistence is immune to that drift.
+  const now = Date.now();
+  const zoneToLabel = new Map(); // "Europe/Moscow" -> "Europe/Moscow (UTC+03:00)"
+  const labelToZone = new Map(); // reverse
   for (const zone of zones) {
+    const label = `${zone} (${formatUtcOffset(getOffset(now, zone))})`;
+    zoneToLabel.set(zone, label);
+    labelToZone.set(label, zone);
     const opt = document.createElement('option');
-    opt.value = zone;
+    opt.value = label;
     datalist.appendChild(opt);
+  }
+
+  // Input text -> IANA zone, or null. Accepts the full label or a bare zone name.
+  function resolveZone(text) {
+    if (labelToZone.has(text)) return labelToZone.get(text);
+    if (zones.has(text)) return text;
+    return null;
   }
 
   // Active zones are the source of truth; inputs may hold invalid free text.
@@ -107,8 +133,8 @@ function initApp() {
   let sourceZone = restoreZone(STORAGE_SOURCE, localZone);
   let targetZone = restoreZone(STORAGE_TARGET, 'America/New_York');
 
-  sourceInput.value = sourceZone;
-  targetInput.value = targetZone;
+  sourceInput.value = zoneToLabel.get(sourceZone) || sourceZone;
+  targetInput.value = zoneToLabel.get(targetZone) || targetZone;
   timeInput.value = nowValueInZone(sourceZone);
 
   function restoreZone(key, fallback) {
@@ -149,9 +175,10 @@ function initApp() {
   function bindZoneInput(input, setZone, storageKey) {
     // While typing: apply only exact matches, silently.
     input.addEventListener('input', () => {
-      if (zones.has(input.value)) {
-        setZone(input.value);
-        saveZone(storageKey, input.value);
+      const zone = resolveZone(input.value);
+      if (zone) {
+        setZone(zone);
+        saveZone(storageKey, zone);
         input.classList.remove('combobox__input--invalid');
         input.removeAttribute('aria-invalid');
         update();
@@ -159,7 +186,7 @@ function initApp() {
     });
     // On blur/enter: mark leftover non-matching text as invalid.
     input.addEventListener('change', () => {
-      const invalid = !zones.has(input.value);
+      const invalid = !resolveZone(input.value);
       input.classList.toggle('combobox__input--invalid', invalid);
       input.setAttribute('aria-invalid', invalid);
     });
@@ -175,8 +202,8 @@ function initApp() {
 
   swapBtn.addEventListener('click', () => {
     [sourceZone, targetZone] = [targetZone, sourceZone];
-    sourceInput.value = sourceZone;
-    targetInput.value = targetZone;
+    sourceInput.value = zoneToLabel.get(sourceZone) || sourceZone;
+    targetInput.value = zoneToLabel.get(targetZone) || targetZone;
     sourceInput.classList.remove('combobox__input--invalid');
     targetInput.classList.remove('combobox__input--invalid');
     sourceInput.removeAttribute('aria-invalid');
