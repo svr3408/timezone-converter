@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timezone Converter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="card">
+    <h1>Timezone Converter</h1>
+
+    <section class="block">
+      <h2 class="field-label">Your time</h2>
+      <div class="combobox">
+        <input type="text" id="source-zone" list="zones" autocomplete="off"
+               placeholder="Start typing a timezone…" aria-label="Source timezone">
+        <svg class="combobox-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </div>
+      <div class="time-row">
+        <div class="combobox">
+          <input type="datetime-local" id="time-input" aria-label="Source time">
+        </div>
+        <button type="button" id="now-btn">Now</button>
+      </div>
+    </section>
+
+    <div class="swap-row">
+      <button type="button" id="swap-btn" aria-label="Swap timezones">
+        <svg class="swap-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>
+        </svg>
+        Swap
+      </button>
+    </div>
+
+    <section class="block">
+      <h2 class="field-label">Target time</h2>
+      <div class="combobox">
+        <input type="text" id="target-zone" list="zones" autocomplete="off"
+               placeholder="Start typing a timezone…" aria-label="Target timezone">
+        <svg class="combobox-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6"/>
+        </svg>
+      </div>
+      <p class="field-error">Unknown timezone</p>
+    </section>
+
+    <section class="result" aria-live="polite" aria-label="Converted time">
+      <p id="result-time">—</p>
+      <p id="result-date"></p>
+      <p id="result-offset"></p>
+    </section>
+
+    <datalist id="zones"></datalist>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
