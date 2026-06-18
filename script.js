@@ -74,7 +74,7 @@ function nowValueInZone(timeZone) {
 
 if (typeof document !== 'undefined') {
   if (typeof Intl.supportedValuesOf !== 'function') {
-    document.body.innerHTML = '<p class="error">Please update your browser.</p>';
+    document.body.innerHTML = '<p class="message message--error">Please update your browser.</p>';
   } else {
     initApp();
   }
@@ -152,13 +152,13 @@ function initApp() {
       if (zones.has(input.value)) {
         setZone(input.value);
         saveZone(storageKey, input.value);
-        input.classList.remove('invalid');
+        input.classList.remove('combobox__input--invalid');
         update();
       }
     });
     // On blur/enter: mark leftover non-matching text as invalid.
     input.addEventListener('change', () => {
-      input.classList.toggle('invalid', !zones.has(input.value));
+      input.classList.toggle('combobox__input--invalid', !zones.has(input.value));
     });
   }
 
@@ -174,8 +174,8 @@ function initApp() {
     [sourceZone, targetZone] = [targetZone, sourceZone];
     sourceInput.value = sourceZone;
     targetInput.value = targetZone;
-    sourceInput.classList.remove('invalid');
-    targetInput.classList.remove('invalid');
+    sourceInput.classList.remove('combobox__input--invalid');
+    targetInput.classList.remove('combobox__input--invalid');
     saveZone(STORAGE_SOURCE, sourceZone);
     saveZone(STORAGE_TARGET, targetZone);
     update();
