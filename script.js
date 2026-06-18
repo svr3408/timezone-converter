@@ -128,13 +128,18 @@ function initApp() {
     return null;
   }
 
+  // IANA zone -> display label for the inputs (mirror of resolveZone).
+  function labelFor(zone) {
+    return zoneToLabel.get(zone) || zone;
+  }
+
   // Active zones are the source of truth; inputs may hold invalid free text.
   const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   let sourceZone = restoreZone(STORAGE_SOURCE, localZone);
   let targetZone = restoreZone(STORAGE_TARGET, 'America/New_York');
 
-  sourceInput.value = zoneToLabel.get(sourceZone) || sourceZone;
-  targetInput.value = zoneToLabel.get(targetZone) || targetZone;
+  sourceInput.value = labelFor(sourceZone);
+  targetInput.value = labelFor(targetZone);
   timeInput.value = nowValueInZone(sourceZone);
 
   function restoreZone(key, fallback) {
@@ -179,7 +184,6 @@ function initApp() {
       if (zone) {
         setZone(zone);
         saveZone(storageKey, zone);
-        input.classList.remove('combobox__input--invalid');
         input.removeAttribute('aria-invalid');
         update();
       }
@@ -187,7 +191,6 @@ function initApp() {
     // On blur/enter: mark leftover non-matching text as invalid.
     input.addEventListener('change', () => {
       const invalid = !resolveZone(input.value);
-      input.classList.toggle('combobox__input--invalid', invalid);
       input.setAttribute('aria-invalid', invalid);
     });
   }
@@ -202,10 +205,8 @@ function initApp() {
 
   swapBtn.addEventListener('click', () => {
     [sourceZone, targetZone] = [targetZone, sourceZone];
-    sourceInput.value = zoneToLabel.get(sourceZone) || sourceZone;
-    targetInput.value = zoneToLabel.get(targetZone) || targetZone;
-    sourceInput.classList.remove('combobox__input--invalid');
-    targetInput.classList.remove('combobox__input--invalid');
+    sourceInput.value = labelFor(sourceZone);
+    targetInput.value = labelFor(targetZone);
     sourceInput.removeAttribute('aria-invalid');
     targetInput.removeAttribute('aria-invalid');
     saveZone(STORAGE_SOURCE, sourceZone);

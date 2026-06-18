@@ -5,6 +5,8 @@
   --bg-input: #ffffff;
   --bg-page: #f4f5f7;
   --bg-result: #f0f2ff;
+  --bg-ghost: #f3f4f6;
+  --bg-ghost-hover: #e5e7eb;
   --border: #e2e4e9;
   --error: #dc2626;
   --text-primary: #111827;
@@ -111,12 +113,12 @@ body {
 
 .combobox__input--zone { padding-right: 38px; }
 
-.combobox__input--invalid {
+.combobox__input[aria-invalid="true"] {
   border-color: var(--error);
   border-width: 1.5px;
 }
 
-.combobox__input--invalid:focus {
+.combobox__input[aria-invalid="true"]:focus {
   box-shadow: 0 0 0 3px rgb(220 38 38 / 0.12);
 }
 
@@ -135,8 +137,7 @@ body {
   stroke-linejoin: round;
 }
 
-.combobox__input--invalid ~ .converter__error,
-.combobox:has(.combobox__input--invalid) + .converter__error {
+.combobox:has(.combobox__input[aria-invalid="true"]) + .converter__error {
   display: block;
 }
 
@@ -154,10 +155,10 @@ body {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
-  background: #f3f4f6;
+  background: var(--bg-ghost);
 }
 
-.button--ghost:hover { background: #e5e7eb; }
+.button--ghost:hover { background: var(--bg-ghost-hover); }
 
 .button--primary {
   display: inline-flex;
