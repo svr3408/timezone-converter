@@ -124,7 +124,7 @@ function initApp() {
     const parts = parseDateTimeLocal(timeInput.value);
     if (!parts) {
       resultTime.textContent = '—';
-      resultDate.textContent = '';
+      resultDate.textContent = 'Enter a time to see the result';
       resultOffset.textContent = '';
       return;
     }

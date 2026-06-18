@@ -29,8 +29,8 @@ body {
 }
 
 .card {
-  width: 480px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -67,10 +67,12 @@ h1 {
 .combobox {
   position: relative;
   flex: 1;
+  min-width: 0;
 }
 
 .combobox input {
   width: 100%;
+  min-width: 0;
   padding: 10px 14px;
   font: inherit;
   font-size: 15px;
