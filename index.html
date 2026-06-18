@@ -12,14 +12,15 @@
     <h1 class="converter__title">Timezone Converter</h1>
 
     <section class="converter__group">
-      <h2 class="converter__label">Your time</h2>
+      <label class="converter__label" for="source-zone">Your time</label>
       <div class="combobox">
         <input type="text" id="source-zone" class="combobox__input combobox__input--zone" list="zones" autocomplete="off"
-               placeholder="Start typing a timezone…" aria-label="Source timezone">
+               placeholder="Start typing a timezone…" aria-label="Source timezone" aria-describedby="source-error">
         <svg class="combobox__icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="m6 9 6 6 6-6"/>
         </svg>
       </div>
+      <p id="source-error" class="converter__error" role="alert">Unknown timezone</p>
       <div class="converter__time-row">
         <div class="combobox">
           <input type="datetime-local" id="time-input" class="combobox__input" aria-label="Source time">
@@ -38,15 +39,15 @@
     </div>
 
     <section class="converter__group">
-      <h2 class="converter__label">Target time</h2>
+      <label class="converter__label" for="target-zone">Target time</label>
       <div class="combobox">
         <input type="text" id="target-zone" class="combobox__input combobox__input--zone" list="zones" autocomplete="off"
-               placeholder="Start typing a timezone…" aria-label="Target timezone">
+               placeholder="Start typing a timezone…" aria-label="Target timezone" aria-describedby="target-error">
         <svg class="combobox__icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="m6 9 6 6 6-6"/>
         </svg>
       </div>
-      <p class="converter__error">Unknown timezone</p>
+      <p id="target-error" class="converter__error" role="alert">Unknown timezone</p>
     </section>
 
     <section class="converter__result result" aria-live="polite" aria-label="Converted time">
@@ -57,6 +58,6 @@
 
     <datalist id="zones"></datalist>
   </main>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>

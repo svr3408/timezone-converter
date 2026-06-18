@@ -153,12 +153,15 @@ function initApp() {
         setZone(input.value);
         saveZone(storageKey, input.value);
         input.classList.remove('combobox__input--invalid');
+        input.removeAttribute('aria-invalid');
         update();
       }
     });
     // On blur/enter: mark leftover non-matching text as invalid.
     input.addEventListener('change', () => {
-      input.classList.toggle('combobox__input--invalid', !zones.has(input.value));
+      const invalid = !zones.has(input.value);
+      input.classList.toggle('combobox__input--invalid', invalid);
+      input.setAttribute('aria-invalid', invalid);
     });
   }
 
@@ -176,6 +179,8 @@ function initApp() {
     targetInput.value = targetZone;
     sourceInput.classList.remove('combobox__input--invalid');
     targetInput.classList.remove('combobox__input--invalid');
+    sourceInput.removeAttribute('aria-invalid');
+    targetInput.removeAttribute('aria-invalid');
     saveZone(STORAGE_SOURCE, sourceZone);
     saveZone(STORAGE_TARGET, targetZone);
     update();
